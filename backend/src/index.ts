@@ -1,8 +1,8 @@
 import dotenv from 'dotenv'
 dotenv.config();
 import express from 'express'
-import './cron/jobimport.cron'
-import './worker/jobimport.worker'
+import './cron/jobImportCron'
+import './worker/jobImportWorker'
 import jobRouter from './routes/jobImport.routes';
 import { connectDb } from './config/db';
 import cors from "cors";
