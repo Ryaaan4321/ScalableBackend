@@ -11,7 +11,7 @@ console.log("Test job added");
 console.log("local env = ",process.env.LOCAL_LINK);
 const app=express();
 app.use(cors({
-    origin: process.env.LOCAL_LINK,
+    origin: process.env.VERCEL_LINK,
     methods: "GET,POST,PUT,PATCH,DELETE",
     credentials: true
 }));
