@@ -19,7 +19,7 @@ type ApiResponse = {
   totalPages: number;
 };
 
-const API_BASE = "http://scalable-backend.vercel.app"; 
+const API_BASE = "https://scalable-backend.vercel.app"; 
 
 export const ImportHistoryPage: React.FC = () => {
   const [logs, setLogs] = useState<ImportLog[]>([]);
