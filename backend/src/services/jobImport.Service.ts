@@ -13,16 +13,15 @@ export class JobImportService {
         let newJobs = 0;
         let updatedJobs = 0;
         let failedJobs: any[] = [];
+        logger.info("feedurl = ",feedUrl);
         try {
             const xml = await this.fetchFeed(feedUrl);
             const feed = await this.parseXml(xml);
             const items = feed?.rss?.channel?.item ?? [];
             totalFetched = Object.keys(items).length;
             console.log("total Fetched  = ", totalFetched);
-            let count = 0;
             for (const it of items) {
                 const normalized = this.normalizeItem(it);
-                // logger.info(normalized);
                 if (!normalized.externalId) {
                     failedJobs.push({
                         reason: "the externalId is missing",

@@ -1,9 +1,10 @@
 import cron from 'node-cron'
 import logger from '../logger'
-import { JobImportService } from '../services/jobImport.Service'
-const jobService=new JobImportService();
+import { JobImportService } from '../services/jobImport.Service';
+import { JobImportQueue } from '../queues/jobImport.queue';
+const jobService = new JobImportService();
 logger.debug("heelo heelooooooooo froom the job importttttttt");
-const FEEDS=[
+const FEEDS = [
     "https://www.higheredjobs.com/rss/articleFeed.cfm",
     "https://jobicy.com/?feed=job_feed&job_categories=management",
     "https://jobicy.com/?feed=job_feed&job_categories=business",
@@ -14,11 +15,15 @@ const FEEDS=[
     "https://jobicy.com/?feed=job_feed",
     "https://jobicy.com/?feed=job_feed&job_categories=data-science"
 ]
-cron.schedule("0 * * * *",async()=>{
+console.log("CRON FILE LOADED");
+cron.schedule("0 * * * *", async () => {
     logger.info("we are inside the schedule");
-    for(const url of FEEDS){
-        const result=await jobService.fetchAndImport(url);
-        logger.debug(result);
+
+    for (const url of FEEDS) {
+        console.log("ADDING JOB:", url);
+        await JobImportQueue.add("import-job", { feedUrl: url });
+        logger.info(`Loaded feed: ${url}`);
     }
-})
+});
+
 

@@ -1,5 +1,6 @@
-import { Redis } from "ioredis";
+import IORedis from "ioredis";
 
-export const connectRedis = {
-  connection: new Redis(process.env.REDIS_URL || "redis://127.0.0.1:6379")
-};
+export const connectRedis = new IORedis(process.env.UPSTASH_REDIS_URL!, {
+  maxRetriesPerRequest: null,
+  enableReadyCheck: false
+});
