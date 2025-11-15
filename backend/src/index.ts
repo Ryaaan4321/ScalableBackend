@@ -7,14 +7,11 @@ import jobRouter from './routes/jobImport.routes';
 import { connectDb } from './config/db';
 import cors from "cors";
 
-
-// import { JobImportQueue } from "./queues/jobImport.queue";
-
-// JobImportQueue.add("test-job", { feedUrl: "https://google.com" });
 console.log("Test job added");
+console.log("local env = ",process.env.LOCAL_LINK);
 const app=express();
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: process.env.LOCAL_LINK,
     methods: "GET,POST,PUT,PATCH,DELETE",
     credentials: true
 }));
