@@ -5,12 +5,19 @@ import './cron/jobimport.cron'
 import './worker/jobimport.worker'
 import jobRouter from './routes/jobImport.routes';
 import { connectDb } from './config/db';
+import cors from "cors";
+
 
 // import { JobImportQueue } from "./queues/jobImport.queue";
 
 // JobImportQueue.add("test-job", { feedUrl: "https://google.com" });
 console.log("Test job added");
 const app=express();
+app.use(cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,PATCH,DELETE",
+    credentials: true
+}));
 connectDb();
 app.use(express.json());
 app.use('/job',jobRouter);
