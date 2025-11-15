@@ -1,33 +1,54 @@
 import axios from "axios";
 import { XMLParser } from "fast-xml-parser";
 import jobModel from "../model/job.model";
-import logger from "../loggert";
+import logger from "../logger";
+import { timeStamp } from "console";
 
 logger.info("inside the job importservice got callledd");
 export class JobImportService {
     async fetchAndImport(feedUrl: string) {
         logger.info("fetch and import method got calledd");
+        let totalFetched = 0;
+        let totalImported = 0;
+        let newJobs = 0;
+        let updatedJobs = 0;
+        let failedJobs: any[] = [];
         try {
             const xml = await this.fetchFeed(feedUrl);
             const feed = await this.parseXml(xml);
             const items = feed?.rss?.channel?.item ?? [];
-
-            // logger.info("items inforrrmation  =  ",items);
+            totalFetched = Object.keys(items).length;
+            console.log("total Fetched  = ", totalFetched);
             let count = 0;
             for (const it of items) {
                 const normalized = this.normalizeItem(it);
-                logger.info(normalized);
+                // logger.info(normalized);
                 if (!normalized.externalId) {
-                    logger.warn("skipping the item: missing externaliid", normalized);
+                    failedJobs.push({
+                        reason: "the externalId is missing",
+                        item: it
+                    })
+                    logger.warn("skipping the item missing externaliid", normalized);
                     continue;
                 }
-                await jobModel.updateOne(
-                    { externalId: normalized.externalId },
-                    { $set: normalized },
-                    { upsert: true }
-                );
+                const exisitingJob = await jobModel.find({ externalId: normalized.externalId })
+                try {
+                    const result = await jobModel.updateOne(
+                        { externalId: normalized.externalId },
+                        { $set: normalized },
+                        { upsert: true }
+                    );
+                    totalImported = totalImported + 1;
+                    if (exisitingJob) {
+                        updatedJobs++;
+                    } else {
+                        newJobs++;
+                    }
+                } catch (e) {
+                    failedJobs.push({externalId:normalized.externalId,reason:e.message});
+                }
             }
-            return { count };
+            return { feedUrl,timeStamp:new Date(),totalFetched,totalImported,newJobs,updatedJobs,failedJobs};
 
         } catch (e: any) {
             logger.error(e.message || e);

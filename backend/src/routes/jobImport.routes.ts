@@ -1,6 +1,6 @@
 import express from 'express'
 import { JobImportService } from '../services/jobImport.Service';
-import logger from '../loggert';
+import logger from '../logger';
 
 const jobRouter=express.Router();
 jobRouter.post('/import',async(req,res)=>{
