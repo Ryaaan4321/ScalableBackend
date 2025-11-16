@@ -6,7 +6,7 @@ let io: Server | null = null;
 export function initSocket(server: http.Server) {
     io = new Server(server, {
         cors: {
-            origin: [process.env.VERCEL_LINK, "http://localhost:3000"],
+            origin: process.env.VERCEL_LINK,
             methods: ["GET", "POST"],
             credentials: true
         }
